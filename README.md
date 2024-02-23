@@ -4,12 +4,12 @@ Presented at the 2023 Esri Developer Summit by Kelly Hutchins and Kitty Hurley o
 
 - [Demo Site](https://geospatialem.github.io/build-a11y-web-maps-sdk-js-calcite-ds-2024/)
 - [Code](https://github.com/geospatialem/build-a11y-web-maps-sdk-js-calcite-ds-2024)
-- Slides _coming soon_
+- Slides 🚧 - _coming soon_
 
 ## Demos
 
-_Coming soon_
+🚧 _Coming soon_ 🚧
 
 ## Resources
 
-_Coming soon_
+🚧 _Coming soon_ 🚧
