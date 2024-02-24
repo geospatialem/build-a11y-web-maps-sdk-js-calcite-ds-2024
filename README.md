@@ -13,7 +13,7 @@ Presented at the 2023 Esri Developer Summit by Kelly Hutchins and Kitty Hurley o
 ## Resources
 
 - Codepen collections
-  - https://codepen.io/collection/gYZYrR
+  - [https://codepen.io/collection/gYZYrR](https://codepen.io/collection/gYZYrR)
 - [Calcite accessibility](https://developers.arcgis.com/calcite-design-system/foundations/accessibility)
 - [ArcGIS Maps SDK for JavaScript accessibility](https://developers.arcgis.com/javascript/latest/accessibility)
 - [Subscribe to the Esri accessibility community](https://community.esri.com/t5/accessibility/ct-p/accessibility)
