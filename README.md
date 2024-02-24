@@ -8,7 +8,7 @@ Presented at the 2023 Esri Developer Summit by Kelly Hutchins and Kitty Hurley o
 
 ## Demos
 
-🚧 _Coming soon_ 🚧
+- [Consistent Focus](demos/consistent-focus.html): Provide a consistent focus order throughout your UI/UX supporting [WCAG's 2.4.3 Focus Order Success Criterion](https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html)
 
 ## Resources
 
