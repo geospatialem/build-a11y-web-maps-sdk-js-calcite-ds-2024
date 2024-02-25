@@ -19,8 +19,9 @@
 
   <style>
       #mapEl {
-        width: 100vw;
         height: 100vh;
+        width: calc(100vw - 49px);
+        padding-left: 49px;
       }
       body.calcite-mode-dark {
         --calcite-ui-focus-color: var(--calcite-color-brand);
@@ -93,7 +94,7 @@
 
   <calcite-panel>
     <arcgis-map item-id="c2a3444863f2466aaad9efa6e65063e1" id="mapEl">
-      <arcgis-legend legend-style="classic" position="top-right"></arcgis-legend>
+      <arcgis-legend legend-style="classic" position="bottom-right"></arcgis-legend>
     </arcgis-map>
   </calcite-panel>
 
@@ -189,6 +190,7 @@
 
     // Initial layer effect
     mapEl.addEventListener("arcgisViewChange", () => {
+      mapEl.view.ui.move("zoom", "top-right");
       updateBloom(bloomIntensity, bloomRadius, bloomThreshold);
     });
 
