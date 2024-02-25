@@ -8,8 +8,10 @@ Presented at the 2023 Esri Developer Summit by Kelly Hutchins and Kitty Hurley o
 
 ## Demos
 
-- [Consistent Focus](demos/consistent-focus.html): Provide a consistent focus order throughout your UI supporting [WCAG's 2.4.3 Focus Order Success Criterion](https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html)
-- [High Contrast](demos/high-contrast.html): Explore contrast with your data, altering the basemap and layer effects to support the map's purpose when a user has enabled high contrast on their operating system, also supporting [WCAG's 1.4.3 Contrast Minimum Success Criterion](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum)
+1. [**Consistent Focus**](demos/consistent-focus.html)
+   - Provide a consistent focus order throughout your UI supporting WCAG's [2.4.3 Focus Order](https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html) Success Criterion.
+2. [**High Contrast**](demos/high-contrast.html)
+   - Explore contrast with your data, altering the basemap and layer effects to support the map's purpose when a user has enabled high contrast on their operating system, also supporting WCAG's [1.4.3 Contrast Minimum](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum) Success Criterion.
 
 ## Resources
 
