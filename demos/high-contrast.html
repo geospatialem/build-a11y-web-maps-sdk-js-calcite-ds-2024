@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"> 
-  <title>Basemap contrast</title>
+  <title>High contrast</title>
 
   <link id="dark-style" rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/dark/main.css" />
   <link id="light-style" rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" disabled />
@@ -87,19 +87,32 @@ require(["esri/Basemap"], (Basemap) => {
       widgets.item(i).classList.toggle("calcite-mode-dark");
       widgets.item(i).classList.toggle("calcite-mode-light");
     }
-    mapEl.basemap = isDarkMode ? highContrastDarkBasemap : highContrastLightBasemap;
+    // If high contrast is enabled, display a high contrast basemap
+    // Else display a gray basemap
+    if (contrastMedia.matches) {
+      mapEl.basemap = isDarkMode ? highContrastDarkBasemap : highContrastLightBasemap;
+    } else {
+      mapEl.basemap = isDarkMode ? "dark-gray-vector" : "gray-vector";
+    }
     toggleModeEl.icon = isDarkMode ? "moon" : "brightness";
     document.body.className = isDarkMode ? "calcite-mode-dark" : undefined;
   });
 
-  // Basemap-specific behavior
-  mapEl.addEventListener("arcgisViewChange", (evt) => {
-    if (evt.target.zoom >= 6) {
-      mapEl.basemap = mode === "dark" ? "dark-gray-vector" : "topo-vector";
+  // High contrast support with basemap and layer effects
+  const contrastMedia = matchMedia("(forced-colors: active)");
+  function checkContrastMedia () {
+    if (mode == "dark") {
+      mapEl.basemap = contrastMedia.matches ? highContrastDarkBasemap : "dark-gray-vector";
+      contrastMedia.matches ? mapEl.map.layers._items[2].effect = "bloom(1.5, 0.5px, 0.1)" : mapEl.map.layers._items[2].effect = "bloom(0, 0px, 0)";
     } else {
-      mapEl.basemap = mode === "dark" ? highContrastDarkBasemap : highContrastLightBasemap;
+      mapEl.basemap = contrastMedia.matches ? highContrastLightBasemap : "gray-vector";
+      contrastMedia.matches ? mapEl.map.layers._items[2].effect = "drop-shadow(3px, 1px, 3px)" : mapEl.map.layers._items[2].effect = "drop-shadow(0px, 0px, 0px)";
     }
-  });
+  }
+
+  // Event listeners on map load and high contrast media query
+  mapEl.addEventListener("arcgisViewChange", checkContrastMedia);
+  contrastMedia.addListener(checkContrastMedia);
 
 });
 </script>
