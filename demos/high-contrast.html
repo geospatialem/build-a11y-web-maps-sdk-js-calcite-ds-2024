@@ -2,9 +2,10 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"> 
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
   <title>High contrast</title>
 
   <link id="dark-style" rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/dark/main.css" />
@@ -19,101 +20,99 @@
       width: 100vw;
       height: 100vh;
     }
-</style>
+  </style>
 </head>
 
 <body class="calcite-mode-dark">
   <calcite-shell content-behind>
     <calcite-navigation slot="header" id="nav">
-      <calcite-navigation-logo
-        icon="accessibility"
-        slot="logo"
-        heading="High Contrast"
-        description="Esri Developer Summit 2024"
-      ></calcite-navigation-logo>
-        <calcite-action-pad layout="horizontal" expand-disabled slot="content-end">
-          <calcite-action id="toggle-mode" text="Toggle mode" icon="brightness"></calcite-action>
-        </calcite-action-pad>
-        <calcite-tooltip placement="bottom" reference-element="toggle-mode" slot="content-end">Toggle mode</calcite-tooltip>
+      <calcite-navigation-logo icon="accessibility" slot="logo" heading="High Contrast"
+        description="Esri Developer Summit 2024"></calcite-navigation-logo>
+      <calcite-action-pad layout="horizontal" expand-disabled slot="content-end">
+        <calcite-action id="toggle-mode" text="Toggle mode" icon="brightness"></calcite-action>
+      </calcite-action-pad>
+      <calcite-tooltip placement="bottom" reference-element="toggle-mode" slot="content-end">Toggle
+        mode</calcite-tooltip>
     </calcite-navigation>
 
     <calcite-panel>
       <arcgis-map item-id="5255b3b101594f259ce4326671e8d5c6" id="mapEl" zoom="2">
-        <arcgis-legend reference-element="#mapEl" legend-style="classic" position="bottom-right"></arcgis-legend>
+        <arcgis-legend legend-style="classic" position="bottom-right"></arcgis-legend>
       </arcgis-map>
     </calcite-panel>
 
-</calcite-shell>
+  </calcite-shell>
 
 </body>
 
 <script>
-require(["esri/Basemap"], (Basemap) => {
+  require(["esri/Basemap"], (Basemap) => {
 
-  const mapEl = document.getElementById("mapEl");
+    const mapEl = document.getElementById("mapEl");
 
-  // High contrast basemap (dark)
-  const highContrastDarkBasemap = new Basemap({
-    portalItem: {
-        id: "3e23478909194c54992eaaee78b5f754" // Dark
-    },
-    title: "High contrast dark theme",
-    id: "high-contrast-dark"
-  });
-
-  // High contrast basemap (light)
-  const highContrastLightBasemap = new Basemap({
+    // High contrast basemap (dark)
+    const highContrastDarkBasemap = new Basemap({
       portalItem: {
-          id: "084291b0ecad4588b8c8853898d72445" // Light
+        id: "3e23478909194c54992eaaee78b5f754" // Dark
+      },
+      title: "High contrast dark theme",
+      id: "high-contrast-dark"
+    });
+
+    // High contrast basemap (light)
+    const highContrastLightBasemap = new Basemap({
+      portalItem: {
+        id: "084291b0ecad4588b8c8853898d72445" // Light
       },
       title: "High contrast (light theme)",
       id: "high-contrast-light"
+    });
+
+    // Mode
+    let mode = "dark";
+    const toggleModeEl = document.getElementById("toggle-mode");
+    const darkModeCss = document.getElementById("dark-style");
+    const lightModeCss = document.getElementById("light-style");
+
+    // Toggle mode
+    toggleModeEl.addEventListener("click", () => {
+      mode = mode === "dark" ? "light" : "dark";
+      const isDarkMode = mode === "dark";
+      darkModeCss.disabled = !darkModeCss.disabled;
+      lightModeCss.disabled = !lightModeCss.disabled;
+      const widgets = document.getElementsByClassName("esri-ui");
+      for (let i = 0; i < widgets.length; i++) {
+        widgets.item(i).classList.toggle("calcite-mode-dark");
+        widgets.item(i).classList.toggle("calcite-mode-light");
+      }
+      // If high contrast is enabled, display a high contrast basemap
+      // Else display a gray basemap
+      if (contrastMedia.matches) {
+        mapEl.basemap = isDarkMode ? highContrastDarkBasemap : highContrastLightBasemap;
+      } else {
+        mapEl.basemap = isDarkMode ? "dark-gray-vector" : "gray-vector";
+      }
+      toggleModeEl.icon = isDarkMode ? "moon" : "brightness";
+      document.body.className = isDarkMode ? "calcite-mode-dark" : undefined;
+    });
+
+    // High contrast support with basemap and layer effects
+    const contrastMedia = matchMedia("(forced-colors: active)");
+    function checkContrastMedia() {
+      if (mode == "dark") {
+        mapEl.basemap = contrastMedia.matches ? highContrastDarkBasemap : "dark-gray-vector";
+        contrastMedia.matches ? mapEl.map.layers._items[2].effect = "bloom(1.5, 0.5px, 0.1)" : mapEl.map.layers._items[2].effect = "bloom(0, 0px, 0)";
+      } else {
+        mapEl.basemap = contrastMedia.matches ? highContrastLightBasemap : "gray-vector";
+        contrastMedia.matches ? mapEl.map.layers._items[2].effect = "drop-shadow(3px, 1px, 3px)" : mapEl.map.layers._items[2].effect = "drop-shadow(0px, 0px, 0px)";
+      }
+    }
+
+    // Event listeners on map load and high contrast media query
+    mapEl.addEventListener("arcgisViewChange", checkContrastMedia);
+    contrastMedia.addListener(checkContrastMedia);
+
   });
-
-  // Mode
-  let mode = "dark";
-  const toggleModeEl = document.getElementById("toggle-mode");
-  const darkModeCss = document.getElementById("dark-style");
-  const lightModeCss = document.getElementById("light-style");
-
-  // Toggle mode
-  toggleModeEl.addEventListener("click", () => {
-    mode = mode === "dark" ? "light" : "dark";
-    const isDarkMode = mode === "dark";
-    darkModeCss.disabled = !darkModeCss.disabled;
-    lightModeCss.disabled = !lightModeCss.disabled;
-    const widgets = document.getElementsByClassName("esri-ui");
-    for (let i = 0; i < widgets.length; i++) {
-      widgets.item(i).classList.toggle("calcite-mode-dark");
-      widgets.item(i).classList.toggle("calcite-mode-light");
-    }
-    // If high contrast is enabled, display a high contrast basemap
-    // Else display a gray basemap
-    if (contrastMedia.matches) {
-      mapEl.basemap = isDarkMode ? highContrastDarkBasemap : highContrastLightBasemap;
-    } else {
-      mapEl.basemap = isDarkMode ? "dark-gray-vector" : "gray-vector";
-    }
-    toggleModeEl.icon = isDarkMode ? "moon" : "brightness";
-    document.body.className = isDarkMode ? "calcite-mode-dark" : undefined;
-  });
-
-  // High contrast support with basemap and layer effects
-  const contrastMedia = matchMedia("(forced-colors: active)");
-  function checkContrastMedia () {
-    if (mode == "dark") {
-      mapEl.basemap = contrastMedia.matches ? highContrastDarkBasemap : "dark-gray-vector";
-      contrastMedia.matches ? mapEl.map.layers._items[2].effect = "bloom(1.5, 0.5px, 0.1)" : mapEl.map.layers._items[2].effect = "bloom(0, 0px, 0)";
-    } else {
-      mapEl.basemap = contrastMedia.matches ? highContrastLightBasemap : "gray-vector";
-      contrastMedia.matches ? mapEl.map.layers._items[2].effect = "drop-shadow(3px, 1px, 3px)" : mapEl.map.layers._items[2].effect = "drop-shadow(0px, 0px, 0px)";
-    }
-  }
-
-  // Event listeners on map load and high contrast media query
-  mapEl.addEventListener("arcgisViewChange", checkContrastMedia);
-  contrastMedia.addListener(checkContrastMedia);
-
-});
 </script>
+
 </html>
