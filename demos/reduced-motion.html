@@ -24,6 +24,7 @@
       height: 100%;
       width: 100%;
     }
+
     #dateDiv {
       padding: 10px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -31,364 +32,361 @@
   </style>
 </head>
 
-  <body>
-    <calcite-shell content-behind>
-      <calcite-navigation slot="header" id="nav">
-        <calcite-navigation-logo
-          icon="accessibility"
-          slot="logo"
-          heading="Reduced Motion"
-          description="Esri Developer Summit 2024"
-        ></calcite-navigation-logo>
-      </calcite-navigation>
-      <calcite-panel>
-        <arcgis-map id="mapEl" portal-item="81bfc8a612d3426583fb9c93381dae84" zoom="8" basemap="gray" center="-117.87574, 34.31224">
-          <arcgis-expand group="expand-widgets" position="top-left" reference-element="#mapEl">
-            <arcgis-search reference-element="#mapEl"></arcgis-search>
-          </arcgis-expand>
-          <arcgis-expand group="expand-widgets" position="top-left" reference-element="#mapEl">
-            <arcgis-bookmarks visible-elements-thumbnail="false"></arcgis-bookmarks>
-          </arcgis-expand>
-          <arcgis-placement position="top-right" reference-element="#mapEl">
-            <arcgis-legend position="top" reference-element="#mapEl"></arcgis-legend>
-            <div id="dateDiv" class="esri-widget">
-              <p><b>Last updated</b>: <span id="date"></span></p>
-            </div>
-            <button id="worstAQI" class="esri-widget esri-button">Find the worst AQI</button>
-          </arcgis-placement>
-        </arcgis-map>
-      </calcite-panel>
-    </calcite-shell>
-  </body>
+<body>
+  <calcite-shell content-behind>
+    <calcite-navigation slot="header" id="nav">
+      <calcite-navigation-logo icon="accessibility" slot="logo" heading="Reduced Motion"
+        description="Esri Developer Summit 2024"></calcite-navigation-logo>
+    </calcite-navigation>
+    <calcite-panel>
+      <arcgis-map id="mapEl" portal-item="81bfc8a612d3426583fb9c93381dae84" zoom="8" basemap="gray"
+        center="-117.87574, 34.31224">
+        <arcgis-expand group="expand-widgets" position="top-left">
+          <arcgis-search></arcgis-search>
+        </arcgis-expand>
+        <arcgis-expand group="expand-widgets" position="top-left">
+          <arcgis-bookmarks visible-elements-thumbnail="false"></arcgis-bookmarks>
+        </arcgis-expand>
+        <arcgis-placement position="top-right">
+          <arcgis-legend position="top"></arcgis-legend>
+          <div id="dateDiv" class="esri-widget">
+            <p><b>Last updated</b>: <span id="date"></span></p>
+          </div>
+          <button id="worstAQI" class="esri-widget esri-button">Find the worst AQI</button>
+        </arcgis-placement>
+      </arcgis-map>
+    </calcite-panel>
+  </calcite-shell>
+</body>
 
-  <script>
-    require([
-      "esri/layers/FeatureLayer",
-      "esri/symbols/CIMSymbol",
-    ], (FeatureLayer, CIMSymbol) => {
-      // Check for reduced motion
-      const isReduced = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
+<script>
+  require([
+    "esri/layers/FeatureLayer",
+    "esri/symbols/CIMSymbol",
+  ], (FeatureLayer, CIMSymbol) => {
+    // Check for reduced motion
+    const isReduced = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
 
-      const mapEl = document.getElementById("mapEl");
-      const bookmarksEl = document.querySelector("arcgis-bookmarks");
-      let view;
+    const mapEl = document.getElementById("mapEl");
+    const bookmarksEl = document.querySelector("arcgis-bookmarks");
+    let view;
 
-      // create CIMSymbol with provided rgb color
-      function createCIMSymbol(r, g, b) {
-        return new CIMSymbol({
-          data: {
-            type: "CIMSymbolReference",
-            primitiveOverrides: [{
-              type: "CIMPrimitiveOverride",
-              primitiveName: "animationOverride",
-              propertyName: "PlayAnimation",
-              valueExpressionInfo: {
-                type: "CIMExpressionInfo",
-                // Animate if the AQI is greater than 151 and animation is not reduced
-                expression: `$feature.OZONEPM_AQI_SORT >= 151 && !${isReduced}`
-              }
-            },
-            {
-              type: "CIMPrimitiveOverride",
-              primitiveName: "animationOverride",
-              propertyName: "Duration",
-              valueExpressionInfo: {
-                type: "CIMExpressionInfo",
-                // decrease the duration of the animation when the AQI is higher
-                expression: `When(
+    // create CIMSymbol with provided rgb color
+    function createCIMSymbol(r, g, b) {
+      return new CIMSymbol({
+        data: {
+          type: "CIMSymbolReference",
+          primitiveOverrides: [{
+            type: "CIMPrimitiveOverride",
+            primitiveName: "animationOverride",
+            propertyName: "PlayAnimation",
+            valueExpressionInfo: {
+              type: "CIMExpressionInfo",
+              // Animate if the AQI is greater than 151 and animation is not reduced
+              expression: `$feature.OZONEPM_AQI_SORT >= 151 && !${isReduced}`
+            }
+          },
+          {
+            type: "CIMPrimitiveOverride",
+            primitiveName: "animationOverride",
+            propertyName: "Duration",
+            valueExpressionInfo: {
+              type: "CIMExpressionInfo",
+              // decrease the duration of the animation when the AQI is higher
+              expression: `When(
                       $feature.OZONEPM_AQI_SORT >= 151 && $feature.OZONEPM_AQI_SORT < 200, 1,
                       $feature.OZONEPM_AQI_SORT >= 201 && $feature.OZONEPM_AQI_SORT < 300, 0.5,
                       0.35
                     )`
-              }
             }
-            ],
-            symbol: {
-              type: "CIMPointSymbol",
-              symbolLayers: [{
-                type: "CIMPictureMarker",
-                enable: true,
-                size: 25,
-                scaleX: 1,
-                tintColor: [r, g, b, 255],
-                url: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Cercle_white_blink.gif",
-                animatedSymbolProperties: {
-                  primitiveName: "animationOverride",
-                  // Only play the animation when user does not have reduced motion
-                  playAnimation: true,
-                  duration: 0.75,
-                  repeatType: "Loop"
-                }
-              },
-              {
-                type: "CIMVectorMarker",
-                enable: true,
-                anchorPoint: {
-                  x: 0,
-                  y: 0
-                },
-                anchorPointUnits: "Relative",
-                dominantSizeAxis3D: "Y",
-                size: 22,
-                billboardMode3D: "FaceNearPlane",
-                frame: {
-                  xmin: 0,
-                  ymin: 0,
-                  xmax: 17,
-                  ymax: 17
-                },
-                markerGraphics: [{
-                  type: "CIMMarkerGraphic",
-                  geometry: {
-                    rings: [
-                      [
-                        [8.5, 0],
-                        [7.02, 0.13],
-                        [5.59, 0.51],
-                        [4.25, 1.14],
-                        [3.04, 1.99],
-                        [1.99, 3.04],
-                        [1.14, 4.25],
-                        [0.51, 5.59],
-                        [0.13, 7.02],
-                        [0, 8.5],
-                        [0.13, 9.98],
-                        [0.51, 11.41],
-                        [1.14, 12.75],
-                        [1.99, 13.96],
-                        [3.04, 15.01],
-                        [4.25, 15.86],
-                        [5.59, 16.49],
-                        [7.02, 16.87],
-                        [8.5, 17],
-                        [9.98, 16.87],
-                        [11.41, 16.49],
-                        [12.75, 15.86],
-                        [13.96, 15.01],
-                        [15.01, 13.96],
-                        [15.86, 12.75],
-                        [16.49, 11.41],
-                        [16.87, 9.98],
-                        [17, 8.5],
-                        [16.87, 7.02],
-                        [16.49, 5.59],
-                        [15.86, 4.25],
-                        [15.01, 3.04],
-                        [13.96, 1.99],
-                        [12.75, 1.14],
-                        [11.41, 0.51],
-                        [9.98, 0.13],
-                        [8.5, 0]
-                      ]
-                    ]
-                  },
-                  symbol: {
-                    type: "CIMPolygonSymbol",
-                    symbolLayers: [{
-                      type: "CIMSolidFill",
-                      enable: true,
-                      color: [r, g, b, 125]
-                    }]
-                  }
-                }],
-                scaleSymbolsProportionally: true,
-                respectFrame: true
-              }
-              ]
-            }
-          }
-        });
-      }
-
-      const aqiLayer = new FeatureLayer({
-        portalItem: {
-          id: "2d718d2733a74d1689d72b922c0ac4f4"
-        },
-        minScale: 0,
-        maxScale: 0,
-        orderBy: {
-          field: "OZONEPM_AQI_SORT",
-          order: "descending"
-        },
-        labelingInfo: [{
-          labelExpressionInfo: {
-            expression: `if ($feature.OZONEPM_AQI_LABEL != "ND") return $feature.OZONEPM_AQI_LABEL`
-          },
-          minScale: 1500000,
-          labelPlacement: "center-center",
-          symbol: {
-            type: "text", // Autocasts as new TextSymbol()
-            color: "black",
-            font: {
-              family: "Avenir Next LT Pro Medium",
-              weight: "bold"
-            },
-            haloSize: 1,
-            haloColor: "white"
-          }
-        }],
-        renderer: {
-          type: "class-breaks",
-          field: "OZONEPM_AQI_SORT",
-          legendOptions: {
-            title: "Ozone & PM AQI"
-          },
-          classBreakInfos: [{
-            minValue: 301,
-            maxValue: 5000,
-            symbol: createCIMSymbol(126, 0, 35),
-            label: "Hazardous"
-          },
-          {
-            minValue: 201,
-            maxValue: 300,
-            symbol: createCIMSymbol(143, 63, 151),
-            label: "Very Unhealthy"
-          },
-          {
-            minValue: 151,
-            maxValue: 200,
-            symbol: createCIMSymbol(255, 0, 0),
-            label: "Unhealthy"
-          },
-          {
-            minValue: 101,
-            maxValue: 150,
-            symbol: createCIMSymbol(255, 126, 0),
-            label: "Unhealthy for Sensitive Groups"
-          },
-          {
-            minValue: 51,
-            maxValue: 100,
-            symbol: createCIMSymbol(255, 255, 0),
-            label: "Moderate"
-          },
-          {
-            minValue: 0,
-            maxValue: 50,
-            symbol: createCIMSymbol(0, 228, 0),
-            label: "Good"
           }
           ],
-          defaultSymbol: createCIMSymbol(255, 255, 255)
+          symbol: {
+            type: "CIMPointSymbol",
+            symbolLayers: [{
+              type: "CIMPictureMarker",
+              enable: true,
+              size: 25,
+              scaleX: 1,
+              tintColor: [r, g, b, 255],
+              url: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Cercle_white_blink.gif",
+              animatedSymbolProperties: {
+                primitiveName: "animationOverride",
+                // Only play the animation when user does not have reduced motion
+                playAnimation: true,
+                duration: 0.75,
+                repeatType: "Loop"
+              }
+            },
+            {
+              type: "CIMVectorMarker",
+              enable: true,
+              anchorPoint: {
+                x: 0,
+                y: 0
+              },
+              anchorPointUnits: "Relative",
+              dominantSizeAxis3D: "Y",
+              size: 22,
+              billboardMode3D: "FaceNearPlane",
+              frame: {
+                xmin: 0,
+                ymin: 0,
+                xmax: 17,
+                ymax: 17
+              },
+              markerGraphics: [{
+                type: "CIMMarkerGraphic",
+                geometry: {
+                  rings: [
+                    [
+                      [8.5, 0],
+                      [7.02, 0.13],
+                      [5.59, 0.51],
+                      [4.25, 1.14],
+                      [3.04, 1.99],
+                      [1.99, 3.04],
+                      [1.14, 4.25],
+                      [0.51, 5.59],
+                      [0.13, 7.02],
+                      [0, 8.5],
+                      [0.13, 9.98],
+                      [0.51, 11.41],
+                      [1.14, 12.75],
+                      [1.99, 13.96],
+                      [3.04, 15.01],
+                      [4.25, 15.86],
+                      [5.59, 16.49],
+                      [7.02, 16.87],
+                      [8.5, 17],
+                      [9.98, 16.87],
+                      [11.41, 16.49],
+                      [12.75, 15.86],
+                      [13.96, 15.01],
+                      [15.01, 13.96],
+                      [15.86, 12.75],
+                      [16.49, 11.41],
+                      [16.87, 9.98],
+                      [17, 8.5],
+                      [16.87, 7.02],
+                      [16.49, 5.59],
+                      [15.86, 4.25],
+                      [15.01, 3.04],
+                      [13.96, 1.99],
+                      [12.75, 1.14],
+                      [11.41, 0.51],
+                      [9.98, 0.13],
+                      [8.5, 0]
+                    ]
+                  ]
+                },
+                symbol: {
+                  type: "CIMPolygonSymbol",
+                  symbolLayers: [{
+                    type: "CIMSolidFill",
+                    enable: true,
+                    color: [r, g, b, 125]
+                  }]
+                }
+              }],
+              scaleSymbolsProportionally: true,
+              respectFrame: true
+            }
+            ]
+          }
         }
       });
+    }
 
-      // Add context from a live feed of smoke detection from NOAA
-      const smokeLayer = new FeatureLayer({
-        portalItem: {
-          id: "670753899cdb49509b0225496a5b5808"
+    const aqiLayer = new FeatureLayer({
+      portalItem: {
+        id: "2d718d2733a74d1689d72b922c0ac4f4"
+      },
+      minScale: 0,
+      maxScale: 0,
+      orderBy: {
+        field: "OZONEPM_AQI_SORT",
+        order: "descending"
+      },
+      labelingInfo: [{
+        labelExpressionInfo: {
+          expression: `if ($feature.OZONEPM_AQI_LABEL != "ND") return $feature.OZONEPM_AQI_LABEL`
         },
-        legendEnabled: false
-      });
+        minScale: 1500000,
+        labelPlacement: "center-center",
+        symbol: {
+          type: "text", // Autocasts as new TextSymbol()
+          color: "black",
+          font: {
+            family: "Avenir Next LT Pro Medium",
+            weight: "bold"
+          },
+          haloSize: 1,
+          haloColor: "white"
+        }
+      }],
+      renderer: {
+        type: "class-breaks",
+        field: "OZONEPM_AQI_SORT",
+        legendOptions: {
+          title: "Ozone & PM AQI"
+        },
+        classBreakInfos: [{
+          minValue: 301,
+          maxValue: 5000,
+          symbol: createCIMSymbol(126, 0, 35),
+          label: "Hazardous"
+        },
+        {
+          minValue: 201,
+          maxValue: 300,
+          symbol: createCIMSymbol(143, 63, 151),
+          label: "Very Unhealthy"
+        },
+        {
+          minValue: 151,
+          maxValue: 200,
+          symbol: createCIMSymbol(255, 0, 0),
+          label: "Unhealthy"
+        },
+        {
+          minValue: 101,
+          maxValue: 150,
+          symbol: createCIMSymbol(255, 126, 0),
+          label: "Unhealthy for Sensitive Groups"
+        },
+        {
+          minValue: 51,
+          maxValue: 100,
+          symbol: createCIMSymbol(255, 255, 0),
+          label: "Moderate"
+        },
+        {
+          minValue: 0,
+          maxValue: 50,
+          symbol: createCIMSymbol(0, 228, 0),
+          label: "Good"
+        }
+        ],
+        defaultSymbol: createCIMSymbol(255, 255, 255)
+      }
+    });
 
-      // Map settings
-      mapEl.addEventListener("arcgisViewChange", () => {
-        view = mapEl.view;
-        mapEl.map.constraints = { minScale: 9000000 };
-        mapEl.map.layers = [smokeLayer, aqiLayer];
+    // Add context from a live feed of smoke detection from NOAA
+    const smokeLayer = new FeatureLayer({
+      portalItem: {
+        id: "670753899cdb49509b0225496a5b5808"
+      },
+      legendEnabled: false
+    });
 
-      });
+    // Map settings
+    mapEl.addEventListener("arcgisViewChange", () => {
+      view = mapEl.view;
+      mapEl.map.constraints = { minScale: 9000000 };
+      mapEl.map.layers = [smokeLayer, aqiLayer];
 
-      // Create custom bookmarks for popular U.S. cities
-      bookmarksEl.addEventListener("arcgisBookmarksReady", (evt) => {
-        evt.target.bookmarks = [
-            ({
-              name: "New York City",
-              viewpoint: {
-                targetGeometry: {
-                  type: "extent",
-                  spatialReference: {
-                    wkid: 102100
-                  },
-                  xmin: -8277001.093097191,
-                  xmax: -8196436.465284584,
-                  ymin: 4935204.6169951,
-                  ymax: 5003080.698112363
-                }
-              }
-            }),
-            ({
-              name: "Los Angeles",
-              viewpoint: {
-                targetGeometry: {
-                  type: "extent",
-                  spatialReference: {
-                    wkid: 102100
-                  },
-                  xmin: -13277633.188295119,
-                  xmax: -12955374.677044831,
-                  ymin: 3896164.583765612,
-                  ymax: 4167668.908234545
-                }
-              }
-            }),
-            ({
-              name: "Chicago",
-              viewpoint: {
-                targetGeometry: {
-                  type: "extent",
-                  spatialReference: {
-                    wkid: 102100
-                  },
-                  xmin: -9828513.4088763,
-                  xmax: -9667384.153251227,
-                  ymin: 5069717.077609119,
-                  ymax: 5205469.239843526
-                }
-              }
-            }),
-            ({
-              name: "Seattle",
-              viewpoint: {
-                targetGeometry: {
-                  type: "extent",
-                  spatialReference: {
-                    wkid: 102100
-                  },
-                  xmin: -13807750.31225708,
-                  xmax: -13485491.801006792,
-                  ymin: 5869795.820046695,
-                  ymax: 6141300.144515628
-                }
-              }
-            }),
-            ({
-              name: "Houston",
-              viewpoint: {
-                targetGeometry: {
-                  type: "extent",
-                  spatialReference: {
-                    wkid: 102100
-                  },
-                  xmin: -10726402.850273041,
-                  xmax: -10506569.95692479,
-                  ymin: 3405510.7425089506,
-                  ymax: 3540345.6604040535
-                }
-              }
-            }),
-            ({
-              name: "Phoenix",
-              viewpoint: {
-                targetGeometry: {
-                  type: "extent",
-                  spatialReference: {
-                    wkid: 102100
-                  },
-                  xmin: -12586137.43292289,
-                  xmax: -12366304.53957464,
-                  ymin: 3887587.260435651,
-                  ymax: 4022422.178330754
-                }
-              }
-            })
-          ];
-      });
+    });
 
-      // Update the date when the layer view is created
-      mapEl.addEventListener("arcgisViewLayerviewCreate", () => {
-        view.whenLayerView(aqiLayer).then((aqiLayerView) => {
+    // Create custom bookmarks for popular U.S. cities
+    bookmarksEl.addEventListener("arcgisBookmarksReady", (evt) => {
+      evt.target.bookmarks = [
+        ({
+          name: "New York City",
+          viewpoint: {
+            targetGeometry: {
+              type: "extent",
+              spatialReference: {
+                wkid: 102100
+              },
+              xmin: -8277001.093097191,
+              xmax: -8196436.465284584,
+              ymin: 4935204.6169951,
+              ymax: 5003080.698112363
+            }
+          }
+        }),
+        ({
+          name: "Los Angeles",
+          viewpoint: {
+            targetGeometry: {
+              type: "extent",
+              spatialReference: {
+                wkid: 102100
+              },
+              xmin: -13277633.188295119,
+              xmax: -12955374.677044831,
+              ymin: 3896164.583765612,
+              ymax: 4167668.908234545
+            }
+          }
+        }),
+        ({
+          name: "Chicago",
+          viewpoint: {
+            targetGeometry: {
+              type: "extent",
+              spatialReference: {
+                wkid: 102100
+              },
+              xmin: -9828513.4088763,
+              xmax: -9667384.153251227,
+              ymin: 5069717.077609119,
+              ymax: 5205469.239843526
+            }
+          }
+        }),
+        ({
+          name: "Seattle",
+          viewpoint: {
+            targetGeometry: {
+              type: "extent",
+              spatialReference: {
+                wkid: 102100
+              },
+              xmin: -13807750.31225708,
+              xmax: -13485491.801006792,
+              ymin: 5869795.820046695,
+              ymax: 6141300.144515628
+            }
+          }
+        }),
+        ({
+          name: "Houston",
+          viewpoint: {
+            targetGeometry: {
+              type: "extent",
+              spatialReference: {
+                wkid: 102100
+              },
+              xmin: -10726402.850273041,
+              xmax: -10506569.95692479,
+              ymin: 3405510.7425089506,
+              ymax: 3540345.6604040535
+            }
+          }
+        }),
+        ({
+          name: "Phoenix",
+          viewpoint: {
+            targetGeometry: {
+              type: "extent",
+              spatialReference: {
+                wkid: 102100
+              },
+              xmin: -12586137.43292289,
+              xmax: -12366304.53957464,
+              ymin: 3887587.260435651,
+              ymax: 4022422.178330754
+            }
+          }
+        })
+      ];
+    });
+
+    // Update the date when the layer view is created
+    mapEl.addEventListener("arcgisViewLayerviewCreate", () => {
+      view.whenLayerView(aqiLayer).then((aqiLayerView) => {
         document.getElementById("date").innerHTML = aqiLayer.editingInfo.lastEditDate.toLocaleString();
         const worstBtn = document.getElementById("worstAQI");
         worstBtn.addEventListener("click", () => {
@@ -408,6 +406,7 @@
       });
     });
 
-    });
-  </script>
+  });
+</script>
+
 </html>
