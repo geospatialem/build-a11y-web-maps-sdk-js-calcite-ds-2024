@@ -5,9 +5,10 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"> 
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
   <title>Consistent Focus</title>
 
   <link id="dark-style" rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/dark/main.css" />
@@ -18,212 +19,219 @@
   <script type="module" src="https://js.arcgis.com/calcite-components/2.6.0/calcite.esm.js"></script>
 
   <style>
-      #mapEl {
-        height: 100vh;
-        width: calc(100vw - 49px);
-        padding-left: 49px;
-      }
-      body.calcite-mode-dark {
-        --calcite-ui-focus-color: var(--calcite-color-brand);
-        --calcite-color-brand: #d67229;
-        --calcite-color-brand-hover: #D67229BF;
-        --calcite-color-brand-press:#D67229E6;
-      }
-      body {
-        --calcite-ui-focus-color: var(--calcite-color-brand);
-        --calcite-color-brand: #000;
-        --calcite-color-brand-hover: #000000BF;
-        --calcite-color-brand-press: #000000E6;
-      }
+    #mapEl {
+      height: 100vh;
+      width: calc(100vw - 49px);
+      padding-left: 49px;
+    }
+
+    body.calcite-mode-dark {
+      --calcite-ui-focus-color: var(--calcite-color-brand);
+      --calcite-color-brand: #d67229;
+      --calcite-color-brand-hover: #D67229BF;
+      --calcite-color-brand-press: #D67229E6;
+    }
+
+    body {
+      --calcite-ui-focus-color: var(--calcite-color-brand);
+      --calcite-color-brand: #000;
+      --calcite-color-brand-hover: #000000BF;
+      --calcite-color-brand-press: #000000E6;
+    }
   </style>
 </head>
 
-  <body class="calcite-mode-dark">
-    <calcite-shell content-behind>
-      <calcite-navigation slot="header" id="nav">
-        <calcite-navigation-logo
-          icon="accessibility"
-          slot="logo"
-          heading="Consistent Focus"
-          description="Esri Developer Summit 2024"
-        ></calcite-navigation-logo>
-          <calcite-action-pad layout="horizontal" expand-disabled slot="content-end">
-            <calcite-action id="toggle-mode" text="Toggle mode" icon="brightness"></calcite-action>
-          </calcite-action-pad>
-          <calcite-tooltip placement="bottom" reference-element="toggle-mode" slot="content-end">Toggle mode</calcite-tooltip>
-      </calcite-navigation>
+<body class="calcite-mode-dark">
+  <calcite-shell content-behind>
+    <calcite-navigation slot="header" id="nav">
+      <calcite-navigation-logo icon="accessibility" slot="logo" heading="Consistent Focus"
+        description="Esri Developer Summit 2024"></calcite-navigation-logo>
+      <calcite-action-pad layout="horizontal" expand-disabled slot="content-end">
+        <calcite-action id="toggle-mode" text="Toggle mode" icon="brightness"></calcite-action>
+      </calcite-action-pad>
+      <calcite-tooltip placement="bottom" reference-element="toggle-mode" slot="content-end">Toggle
+        mode</calcite-tooltip>
+    </calcite-navigation>
 
-      <calcite-shell-panel slot="panel-start" display-mode="float">
-        <calcite-action-bar slot="action-bar">
-          <calcite-action data-action-id="layer-effects" icon="effects" text="Layer effects"></calcite-action>
-        </calcite-action-bar>
-        <!-- Layer effects -->
-        <calcite-panel heading="Layer effects" height-scale="l" data-panel-id="layer-effects" closable closed>
-            <!-- Bloom effect -->
-            <calcite-block open heading="Bloom" description="Apply a neon-like glow">
-              <!-- Bloom enabled -->
-              <calcite-block-section id="bloom-effect" open text="Apply bloom effect" toggle-display="switch">
-              <!-- Intensity -->
-              <calcite-label for="bloom-intensity">Bloom intensity</calcite-label>
-              <calcite-slider id="bloom-intensity" value="1.5" min="0" max="10" step="0.5" label-ticks ticks="2"></calcite-slider>
-              <!-- Radius-->
-              <calcite-label for="bloom-radius">Bloom radius</calcite-label>
-              <calcite-slider id="bloom-radius" value="0.5" min="0" max="1" step="0.5" label-ticks ticks="0.25"></calcite-slider>
-              <!-- Threshold -->
-              <calcite-label for="bloom-threshold">Bloom threshold</calcite-label>
-              <calcite-slider id="bloom-threshold" value="0.1" min="0" max="0.5" step="0.1" label-ticks ticks="0.25"></calcite-slider>
-              </calcite-block-section>
-          </calcite-block>
-          <!-- Drop shadow effect -->
-          <calcite-block open heading="Drop shadow" description="Apply a drop shadow">
-            <!-- Shadow enabled -->
-            <calcite-block-section id="shadow-effect" text="Apply drop shadow effect" toggle-display="switch">
+    <calcite-shell-panel slot="panel-start" display-mode="float">
+      <calcite-action-bar slot="action-bar">
+        <calcite-action data-action-id="layer-effects" icon="effects" text="Layer effects"></calcite-action>
+      </calcite-action-bar>
+      <!-- Layer effects -->
+      <calcite-panel heading="Layer effects" height-scale="l" data-panel-id="layer-effects" closable closed>
+        <!-- Bloom effect -->
+        <calcite-block open heading="Bloom" description="Apply a neon-like glow">
+          <!-- Bloom enabled -->
+          <calcite-block-section id="bloom-effect" open text="Apply bloom effect" toggle-display="switch">
+            <!-- Intensity -->
+            <calcite-label for="bloom-intensity">Bloom intensity</calcite-label>
+            <calcite-slider id="bloom-intensity" value="1.5" min="0" max="10" step="0.5" label-ticks
+              ticks="2"></calcite-slider>
+            <!-- Radius-->
+            <calcite-label for="bloom-radius">Bloom radius</calcite-label>
+            <calcite-slider id="bloom-radius" value="0.5" min="0" max="1" step="0.5" label-ticks
+              ticks="0.25"></calcite-slider>
+            <!-- Threshold -->
+            <calcite-label for="bloom-threshold">Bloom threshold</calcite-label>
+            <calcite-slider id="bloom-threshold" value="0.1" min="0" max="0.5" step="0.1" label-ticks
+              ticks="0.25"></calcite-slider>
+          </calcite-block-section>
+        </calcite-block>
+        <!-- Drop shadow effect -->
+        <calcite-block open heading="Drop shadow" description="Apply a drop shadow">
+          <!-- Shadow enabled -->
+          <calcite-block-section id="shadow-effect" text="Apply drop shadow effect" toggle-display="switch">
             <!-- Shadow length -->
             <calcite-label for="shadow-length">Shadow length</calcite-label>
-            <calcite-slider id="shadow-length" value="3" min="0" max="4" step="1" label-ticks ticks="1"></calcite-slider>
+            <calcite-slider id="shadow-length" value="3" min="0" max="4" step="1" label-ticks
+              ticks="1"></calcite-slider>
             <!-- Shadow depth-->
             <calcite-label for="shadow-depth">Shadow depth</calcite-label>
             <calcite-slider id="shadow-depth" value="1" min="0" max="4" step="1" label-ticks ticks="1"></calcite-slider>
             <!-- Shadow outline -->
             <calcite-label for="shadow-outline">Shadow outline</calcite-label>
-            <calcite-slider id="shadow-outline" value="3" min="0" max="4" step="1" label-ticks ticks="1"></calcite-slider>
+            <calcite-slider id="shadow-outline" value="3" min="0" max="4" step="1" label-ticks
+              ticks="1"></calcite-slider>
           </calcite-block-section>
-      </calcite-block> 
+        </calcite-block>
+      </calcite-panel>
+    </calcite-shell-panel>
+
+    <calcite-panel>
+      <arcgis-map item-id="c2a3444863f2466aaad9efa6e65063e1" id="mapEl">
+        <arcgis-legend position="bottom-right"></arcgis-legend>
+        <arcgis-expand mode="floating" position="top-right">
+          <arcgis-search></arcgis-search>
+        </arcgis-expand>
+      </arcgis-map>
     </calcite-panel>
-  </calcite-shell-panel>
 
-  <calcite-panel>
-    <arcgis-map item-id="c2a3444863f2466aaad9efa6e65063e1" id="mapEl">
-      <arcgis-legend legend-style="classic" position="bottom-right"></arcgis-legend>
-    </arcgis-map>
-  </calcite-panel>
+  </calcite-shell>
 
-</calcite-shell>
+</body>
 
-  </body>
+<script>
+  const mapEl = document.getElementById("mapEl");
+  const actionBarEl = document.querySelector("calcite-action-bar");
 
-  <script>
-    const mapEl = document.getElementById("mapEl");
-    const actionBarEl = document.querySelector("calcite-action-bar");
+  let activeWidget;
 
-    let activeWidget;
+  // Mode
+  let mode = "dark";
 
-    // Mode
-    let mode = "dark";
+  const toggleModeEl = document.getElementById("toggle-mode");
+  const darkModeCss = document.getElementById("dark-style");
+  const lightModeCss = document.getElementById("light-style");
 
-    const toggleModeEl = document.getElementById("toggle-mode");
-    const darkModeCss = document.getElementById("dark-style");
-    const lightModeCss = document.getElementById("light-style");
+  // Layer effects
+  const effectBlockSectionEl = document.getElementById("bloom-effect");
+  const shadowBlockSectionEl = document.getElementById("shadow-effect");
 
-    // Layer effects
-    const effectBlockSectionEl = document.getElementById("bloom-effect");
-    const shadowBlockSectionEl = document.getElementById("shadow-effect");
+  let bloomIntensity = 1.5;
+  let bloomRadius = 0.5;
+  let bloomThreshold = 0.1;
 
-    let bloomIntensity = 1.5;
-    let bloomRadius = 0.5;
-    let bloomThreshold = 0.1;
+  let shadowLength = 3;
+  let shadowDepth = 1;
+  let shadowOutline = 3;
 
-    let shadowLength = 3;
-    let shadowDepth = 1;
-    let shadowOutline = 3;
+  // Toggle mode
+  toggleModeEl.addEventListener("click", () => {
+    mode = mode === "dark" ? "light" : "dark";
+    const isDarkMode = mode === "dark";
+    darkModeCss.disabled = !darkModeCss.disabled;
+    lightModeCss.disabled = !lightModeCss.disabled;
+    const widgets = document.getElementsByClassName("esri-ui");
+    for (let i = 0; i < widgets.length; i++) {
+      widgets.item(i).classList.toggle("calcite-mode-dark");
+      widgets.item(i).classList.toggle("calcite-mode-light");
+    }
+    mapEl.basemap = isDarkMode ? "dark-gray" : "gray";
+    toggleModeEl.icon = isDarkMode ? "moon" : "brightness";
+    document.body.className = isDarkMode ? "calcite-mode-dark" : undefined;
+  });
 
-    // Toggle mode
-    toggleModeEl.addEventListener("click", () => {
-      mode = mode === "dark" ? "light" : "dark";
-      const isDarkMode = mode === "dark";
-      darkModeCss.disabled = !darkModeCss.disabled;
-      lightModeCss.disabled = !lightModeCss.disabled;
-      const widgets = document.getElementsByClassName("esri-ui");
-      for (let i = 0; i < widgets.length; i++) {
-        widgets.item(i).classList.toggle("calcite-mode-dark");
-        widgets.item(i).classList.toggle("calcite-mode-light");
-      }
-      mapEl.basemap = isDarkMode ? "dark-gray" : "gray";
-      toggleModeEl.icon = isDarkMode ? "moon" : "brightness";
-      document.body.className = isDarkMode ? "calcite-mode-dark" : undefined;
-    });
-
-    // Bloom effects
-    effectBlockSectionEl.addEventListener("calciteBlockSectionToggle", (evt) => {
-      if (evt.target.open) {
-        shadowBlockSectionEl.open = false;
-        updateBloom(bloomIntensity, bloomRadius, bloomThreshold);
-      } else {
-        updateBloom(0, 0, 0);
-      }
-    });
-
-    // Drop shadow effects
-    shadowBlockSectionEl.addEventListener("calciteBlockSectionToggle", (evt) => {
-      if (evt.target.open) {
-        effectBlockSectionEl.open = false;
-        updateShadow(shadowLength, shadowDepth, shadowOutline);
-      } else {
-        updateShadow(0, 0, 0);
-      }
-    });
-
-    // Layer effect values
-    const sliderEls = document.querySelectorAll("calcite-slider");
-    sliderEls?.forEach((sliderEl) => {
-      sliderEl.addEventListener("calciteSliderInput", () => {
-        const sliderElId = sliderEl.id;
-        // Bloom effects
-        if (sliderElId.includes("bloom")) {
-          bloomIntensity = document.getElementById("bloom-intensity").value;
-          bloomRadius = document.getElementById("bloom-radius").value;
-          bloomThreshold = document.getElementById("bloom-threshold").value;
-          if (effectBlockSectionEl.open) {
-            updateBloom(bloomIntensity, bloomRadius, bloomThreshold);
-          }
-        // Drop shadow effects
-        } else if (sliderElId.includes("shadow")) {
-          shadowLength = document.getElementById("shadow-length").value;
-          shadowDepth = document.getElementById("shadow-depth").value;
-          shadowOutline = document.getElementById("shadow-outline").value;
-          if (shadowBlockSectionEl.open) {
-            updateShadow(shadowLength, shadowDepth, shadowOutline);
-          }
-        }
-      });
-    });
-
-    // Initial layer effect
-    mapEl.addEventListener("arcgisViewChange", () => {
-      mapEl.view.ui.move("zoom", "top-right");
+  // Bloom effects
+  effectBlockSectionEl.addEventListener("calciteBlockSectionToggle", (evt) => {
+    if (evt.target.open) {
+      shadowBlockSectionEl.open = false;
       updateBloom(bloomIntensity, bloomRadius, bloomThreshold);
+    } else {
+      updateBloom(0, 0, 0);
+    }
+  });
+
+  // Drop shadow effects
+  shadowBlockSectionEl.addEventListener("calciteBlockSectionToggle", (evt) => {
+    if (evt.target.open) {
+      effectBlockSectionEl.open = false;
+      updateShadow(shadowLength, shadowDepth, shadowOutline);
+    } else {
+      updateShadow(0, 0, 0);
+    }
+  });
+
+  // Layer effect values
+  const sliderEls = document.querySelectorAll("calcite-slider");
+  sliderEls?.forEach((sliderEl) => {
+    sliderEl.addEventListener("calciteSliderInput", () => {
+      const sliderElId = sliderEl.id;
+      // Bloom effects
+      if (sliderElId.includes("bloom")) {
+        bloomIntensity = document.getElementById("bloom-intensity").value;
+        bloomRadius = document.getElementById("bloom-radius").value;
+        bloomThreshold = document.getElementById("bloom-threshold").value;
+        if (effectBlockSectionEl.open) {
+          updateBloom(bloomIntensity, bloomRadius, bloomThreshold);
+        }
+        // Drop shadow effects
+      } else if (sliderElId.includes("shadow")) {
+        shadowLength = document.getElementById("shadow-length").value;
+        shadowDepth = document.getElementById("shadow-depth").value;
+        shadowOutline = document.getElementById("shadow-outline").value;
+        if (shadowBlockSectionEl.open) {
+          updateShadow(shadowLength, shadowDepth, shadowOutline);
+        }
+      }
     });
+  });
 
-    // Bloom effect
-    function updateBloom(bloomIntensity, bloomRadius, bloomThreshold) {
-      mapEl.map.layers._items[0].effect = `bloom(${bloomIntensity}, ${bloomRadius}px, ${bloomThreshold})`;
+  // Initial layer effect
+  mapEl.addEventListener("arcgisViewChange", () => {
+    mapEl.view.ui.move("zoom", "top-right");
+    updateBloom(bloomIntensity, bloomRadius, bloomThreshold);
+  });
+
+  // Bloom effect
+  function updateBloom(bloomIntensity, bloomRadius, bloomThreshold) {
+    mapEl.map.layers._items[0].effect = `bloom(${bloomIntensity}, ${bloomRadius}px, ${bloomThreshold})`;
+  }
+
+  // Drop shadow effect
+  function updateShadow(shadowLength, shadowDepth, shadowOutline) {
+    mapEl.map.layers.items[0].effect = `drop-shadow(${shadowLength}px, ${shadowDepth}px, ${shadowOutline}px)`;
+  }
+
+  // Active action
+  const handleActionBarClick = ({ target }) => {
+    if (target.tagName !== "CALCITE-ACTION") {
+      return;
     }
 
-    // Drop shadow effect
-    function updateShadow(shadowLength, shadowDepth, shadowOutline) {
-      mapEl.map.layers.items[0].effect = `drop-shadow(${shadowLength}px, ${shadowDepth}px, ${shadowOutline}px)`;
+    if (activeWidget) {
+      activeActionEl = document.querySelector(`[data-action-id=${activeWidget}]`).removeAttribute("active");
+      activePanelEl = document.querySelector(`[data-panel-id=${activeWidget}]`).closed = true;
     }
 
-    // Active action
-    const handleActionBarClick = ({ target }) => {
-      if (target.tagName !== "CALCITE-ACTION") {
-        return;
-      }
-
-      if (activeWidget) {
-        activeActionEl = document.querySelector(`[data-action-id=${activeWidget}]`).removeAttribute("active");
-        activePanelEl = document.querySelector(`[data-panel-id=${activeWidget}]`).closed = true;
-      }
-
-      const nextWidget = target.dataset.actionId;
-      if (nextWidget !== activeWidget) {
-        document.querySelector(`[data-action-id=${nextWidget}]`).active = true;
-        document.querySelector(`[data-panel-id=${nextWidget}]`).closed = false;
-        activeWidget = nextWidget;
-        document.querySelector(`[data-panel-id=${nextWidget}]`).setFocus();
-      } else {
-        activeWidget = null;
-      }
+    const nextWidget = target.dataset.actionId;
+    if (nextWidget !== activeWidget) {
+      document.querySelector(`[data-action-id=${nextWidget}]`).active = true;
+      document.querySelector(`[data-panel-id=${nextWidget}]`).closed = false;
+      activeWidget = nextWidget;
+      document.querySelector(`[data-panel-id=${nextWidget}]`).setFocus();
+    } else {
+      activeWidget = null;
+    }
   };
 
   actionBarEl.addEventListener("click", handleActionBarClick);
@@ -239,5 +247,31 @@
     });
   }
 
-  </script>
+
+  // Handle search/popup focus 
+  const searchEl = document.querySelector("arcgis-search");
+  let abortController;
+
+
+  searchEl.addEventListener("searchComplete", onSearchComplete);
+
+  async function onSearchComplete() {
+    const reactiveUtils = await $arcgis.import("esri/core/reactiveUtils");
+
+    abortController?.abort();
+    const { signal } = (abortController = new AbortController());
+    const view = mapEl.view;
+
+    // When the popup is visible set focus on it.
+    await reactiveUtils.whenOnce(() => view.popup.visible, signal);
+    view.popup.focus();
+
+    // And when the popup is closed move the focus back to the search wiget.
+    await reactiveUtils.whenOnce(() => !view.popup.visible, signal);
+    searchEl.focusSearch();
+
+  }
+
+</script>
+
 </html>
