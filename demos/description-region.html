@@ -1,0 +1,124 @@
+<!-- Codepen: https://codepen.io/geospatialem/pen/YzMPemx -->
+<!-- Resources:
+     1. 2023 Map Description demo: https://github.com/kellyhutchins/DevSummit2023-A11y/blob/main/demos/MapDescription.html
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"> 
+  <title>Map Description and Live Regions</title>
+
+  <link id="light-style" rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+  <link id="dark-style" rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/dark/main.css" disabled/>
+  <script src="https://js.arcgis.com/4.29/"></script>
+  <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.6.0/calcite.css" />
+  <script type="module" src="https://js.arcgis.com/calcite-components/2.6.0/calcite.esm.js"></script>
+
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .sr-only {
+      position: absolute;
+	  width: 1px;
+	  height: 1px;
+	  padding: 0;
+	  margin: -1px;
+	  overflow: hidden;
+	  clip: rect(0,0,0,0);
+	  border: 0;
+    }
+  </style>
+
+</head>
+
+<body aria-describedby="map-loaded">
+  <calcite-shell content-behind>
+    <calcite-navigation slot="header" id="nav">
+	  <calcite-navigation-logo
+	    icon="accessibility"
+        slot="logo"
+        heading="Map Description and Live Regions"
+        description="Esri Developer Summit 2024"
+      ></calcite-navigation-logo>
+	  <calcite-action-pad layout="horizontal" expand-disabled slot="content-end">
+	    <calcite-action id="toggle-mode" text="Toggle mode" icon="brightness"></calcite-action>
+	  </calcite-action-pad>
+	  <calcite-tooltip placement="bottom" reference-element="toggle-mode" slot="content-end">Toggle mode</calcite-tooltip>
+	</calcite-navigation>
+    <calcite-panel>
+	  <div id="viewDiv"></div>
+	    <p id="map-loaded" aria-live="polite" class="sr-only"></p>
+		<p id="map-description" class="sr-only"></p>
+    </calcite-panel>
+  </calcite-shell>
+</body>
+
+<script>
+  require([
+    "esri/views/MapView", 
+	"esri/core/reactiveUtils", 
+	"esri/WebMap"
+  ], (
+    MapView,
+	reactiveUtils,
+	WebMap
+  ) => {
+  
+    // Mode
+    let mode = "light";
+    const toggleModeEl = document.getElementById("toggle-mode");
+    const darkModeCss = document.getElementById("dark-style");
+    const lightModeCss = document.getElementById("light-style");
+  
+    const mapLoadMsg = document.querySelector("#map-loaded");
+    const mapDescription = document.querySelector("#map-description");
+	
+    const map = new WebMap({
+      portalItem: {
+	    id: "f2e9b762544945f390ca4ac3671cfa72"
+      }
+    });
+
+    const view = new MapView({
+      map,
+      container: "viewDiv"
+    });
+
+    view.when(() => {
+      mapDescription.innerText = map.portalItem.snippet;
+	  mapLoadMsg.innerText = `${map.portalItem.title} map has loaded.`;
+	  view.container.setAttribute("aria-describedby", "map-description");
+	  const rootNode = document.getElementsByClassName("esri-view-surface");
+	  for (let i = 0; i < rootNode.length; i++) {
+	    rootNode[i].setAttribute("aria-describedby", "map-description");
+	  }
+    });
+  
+    // Toggle mode
+    toggleModeEl.addEventListener("click", () => {
+      mode = mode === "dark" ? "light" : "dark";
+	  const isDarkMode = mode === "dark";
+	  darkModeCss.disabled = !darkModeCss.disabled;
+	  lightModeCss.disabled = !lightModeCss.disabled;
+	  const widgets = document.getElementsByClassName("esri-ui");
+	  for (let i = 0; i < widgets.length; i++) {
+		widgets.item(i).classList.toggle("calcite-mode-dark");
+		widgets.item(i).classList.toggle("calcite-mode-light");
+	  }
+	  map.basemap = isDarkMode ? "dark-gray" : "gray";
+	  toggleModeEl.icon = isDarkMode ? "moon" : "brightness";
+	  document.body.className = isDarkMode ? "calcite-mode-dark" : undefined;
+    });
+  });
+</script>
+</html>

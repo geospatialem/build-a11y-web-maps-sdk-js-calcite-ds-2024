@@ -8,11 +8,13 @@ Presented at the 2023 Esri Developer Summit by Kelly Hutchins and Kitty Hurley o
 
 ## Demos
 
-1. [**Consistent Focus**](demos/consistent-focus.html)
-   - Provide a consistent focus order throughout your UI supporting WCAG's [2.4.3 Focus Order](https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html) Success Criterion.
-2. [**High Contrast**](demos/high-contrast.html)
+1. [**Map Description and Live Regions**](demos/description-region.html)
+   - Provide context to when the map has loaded and include a description when the map is in focus to further WCAG's [1.1.1 Non-text Content](https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html) Success Criterion.
+2. [**Consistent Focus**](demos/consistent-focus.html)
+   - Provide a consistent focus order throughout your UI supporting WCAG's [2.4.3 Focus Order](https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html) and [3.2.3 Consistent Navigation](https://www.w3.org/WAI/WCAG22/Understanding/consistent-navigation.html) Success Criterion.
+3. [**High Contrast**](demos/high-contrast.html)
    - Explore contrast with your data, altering the basemap and layer effects to support the map's purpose when a user has enabled high contrast on their operating system, also supporting WCAG's [1.4.3 Contrast Minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum) Success Criterion.
-3. [**Reduced Motion**](demos/reduced-motion.html)
+4. [**Reduced Motion**](demos/reduced-motion.html)
    - Support reduced motion when a user has enabled reduced motion, or disabled animations on their operating system, also supporting WCAG's [2.3.3 Animation from Interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html) Success Criterion.
 
 ## Resources
