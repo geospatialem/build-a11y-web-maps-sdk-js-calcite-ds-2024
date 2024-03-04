@@ -56,6 +56,7 @@
     <calcite-shell-panel slot="panel-start" display-mode="float">
       <calcite-action-bar slot="action-bar">
         <calcite-action data-action-id="layer-effects" icon="effects" text="Layer effects"></calcite-action>
+        <calcite-action data-action-id="legend" icon="legend" text="Legend"></calcite-action>
       </calcite-action-bar>
       <!-- Layer effects -->
       <calcite-panel heading="Layer effects" height-scale="l" data-panel-id="layer-effects" closable closed>
@@ -95,11 +96,14 @@
           </calcite-block-section>
         </calcite-block>
       </calcite-panel>
+      <!-- Legend Panel -->
+      <calcite-panel heading="Legend" height-scale="l" data-panel-id="legend" closable closed>
+        <arcgis-legend reference-element="arcgis-map" position="bottom-right"></arcgis-legend>
+      </calcite-panel>
     </calcite-shell-panel>
 
     <calcite-panel>
       <arcgis-map item-id="c2a3444863f2466aaad9efa6e65063e1" id="mapEl">
-        <arcgis-legend position="bottom-right"></arcgis-legend>
         <arcgis-expand mode="floating" position="top-right">
           <arcgis-search></arcgis-search>
         </arcgis-expand>
