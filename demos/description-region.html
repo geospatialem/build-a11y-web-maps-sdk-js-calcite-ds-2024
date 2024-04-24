@@ -1,6 +1,7 @@
 <!-- Codepen: https://codepen.io/geospatialem/pen/YzMPemx -->
 <!-- Resources:
      1. 2023 Map Description demo: https://github.com/kellyhutchins/DevSummit2023-A11y/blob/main/demos/MapDescription.html
+     2. Spread syntax (...): https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
 -->
 
 <!DOCTYPE html>
@@ -65,11 +66,11 @@
 
 <script>
   require([
-    "esri/views/MapView", 
+  "esri/views/MapView", 
 	"esri/core/reactiveUtils", 
 	"esri/WebMap"
   ], (
-    MapView,
+  MapView,
 	reactiveUtils,
 	WebMap
   ) => {
@@ -80,8 +81,8 @@
     const darkModeCss = document.getElementById("dark-style");
     const lightModeCss = document.getElementById("light-style");
   
-    const mapLoadMsg = document.querySelector("#map-loaded");
-    const mapDescription = document.querySelector("#map-description");
+    const mapLoadMsg = document.getElementById("map-loaded");
+    const mapDescription = document.getElementById("map-description");
 	
     const map = new WebMap({
       portalItem: {
@@ -94,15 +95,15 @@
       container: "viewDiv"
     });
 
-    view.when(() => {
+    viewWhen();
+
+    async function viewWhen() {
+      await view.when();
+      mapLoadMsg.innerText = `${map.portalItem.title} map has loaded.`;
       mapDescription.innerText = map.portalItem.snippet;
-	  mapLoadMsg.innerText = `${map.portalItem.title} map has loaded.`;
-	  view.container.setAttribute("aria-describedby", "map-description");
-	  const rootNode = document.getElementsByClassName("esri-view-surface");
-	  for (let i = 0; i < rootNode.length; i++) {
-	    rootNode[i].setAttribute("aria-describedby", "map-description");
-	  }
-    });
+      const surfacesEls = [...document.getElementsByClassName("esri-view-surface")]; // Resource: Spread syntax (...)
+      surfacesEls.forEach((surfaceEl) => surfaceEl.setAttribute("aria-describedby", "map-description"));
+    }
   
     // Toggle mode
     toggleModeEl.addEventListener("click", () => {
@@ -110,11 +111,8 @@
 	  const isDarkMode = mode === "dark";
 	  darkModeCss.disabled = !darkModeCss.disabled;
 	  lightModeCss.disabled = !lightModeCss.disabled;
-	  const widgets = document.getElementsByClassName("esri-ui");
-	  for (let i = 0; i < widgets.length; i++) {
-		widgets.item(i).classList.toggle("calcite-mode-dark");
-		widgets.item(i).classList.toggle("calcite-mode-light");
-	  }
+	  const widgets = [...document.getElementsByClassName("esri-ui")]; // Resource: Spread syntax (...)
+	  widgets.forEach((widget) => widget.classList.toggle("calcite-mode-dark"));
 	  map.basemap = isDarkMode ? "dark-gray" : "gray";
 	  toggleModeEl.icon = isDarkMode ? "moon" : "brightness";
 	  document.body.className = isDarkMode ? "calcite-mode-dark" : undefined;
